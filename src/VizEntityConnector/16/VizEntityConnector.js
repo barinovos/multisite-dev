@@ -32,7 +32,7 @@ const VizEntityConnector = ({
   disabledConnection
 }) => {
   const [refs, setRefs] = useState({})
-  const [updateTrigger, triggerUpdate] = useState({})
+  const [updateTrigger, triggerUpdate] = useState(Object.create(null))
   const primaryRef = useRef(null)
   const secondaryRef = useRef(null)
   const thirdRef = useRef(null)
@@ -91,12 +91,13 @@ const VizEntityConnector = ({
     }
   }, [primaryRef, level, updateTrigger])
 
-  const handler = useCallback(() => triggerUpdate({}), [triggerUpdate])
+  const handler = useCallback(() => triggerUpdate(Object.create(null)), [triggerUpdate])
   useEventListener('resize', handler)
 
   // We accept minimum 2 levels of Connection with at least 1 connection in between
+  // if nothing provided - nothing rendered
   if (!level || level < MAX_LEVELS - 1 || !connectors.length)
-    return <div>Error! Levels and connections required</div>
+    return null
 
   const defaultOffset = { top: TOP_OFFSET }
   const FlexPlaceholder = <VizConnector style={{ visibility: 'hidden' }} />

@@ -11,6 +11,7 @@ const VizLevel = forwardRef(({ children, style }, ref) => (
 ))
 
 VizLevel.propTypes = {
+  /** Custom styles on div element **/
   style: PropTypes.object
 }
 
