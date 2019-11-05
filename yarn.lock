@@ -2642,8 +2642,8 @@ color-string@^1.5.2:
 
 color@^3.0.0, color@^3.1.0:
   version "3.1.2"
-  resolved "https://registry.yarnpkg.com/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
-  integrity sha512-vXTJhHebByxZn3lDvDJYw4lR5+uB3vuoHsuYA5AKuxRVn5wzzIfQKGLBmgdVRHKTJYeK5rvJcHnrd0Li49CFpg==
+  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/color/-/color-3.1.2.tgz#68148e7f85d41ad7649c5fa8c8106f098d229e10"
+  integrity sha1-aBSOf4XUGtdknF+oyBBvCY0inhA=
   dependencies:
     color-convert "^1.9.1"
     color-string "^1.5.2"
@@ -4165,7 +4165,7 @@ fast-json-stable-stringify@^2.0.0:
 
 fast-levenshtein@~2.0.4:
   version "2.0.6"
-  resolved "https://registry.yarnpkg.com/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
+  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/fast-levenshtein/-/fast-levenshtein-2.0.6.tgz#3d8a5c66883a16a30ca8643e851f19baa7797917"
   integrity sha1-PYpcZog6FqMMqGQ+hR8Zuqd5eRc=
 
 faye-websocket@^0.10.0:
@@ -8151,8 +8151,8 @@ prompts@^2.0.1:
 
 prop-types@15.x, prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
-  resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
-  integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
+  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
+  integrity sha1-UsQedbjIfnK52TYOAga5ncv/psU=
   dependencies:
     loose-envify "^1.4.0"
     object-assign "^4.1.1"
@@ -8658,9 +8658,9 @@ realpath-native@^1.1.0:
     util.promisify "^1.0.0"
 
 recharts-scale@^0.4.2:
-  version "0.4.2"
-  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/recharts-scale/-/recharts-scale-0.4.2.tgz#b66315d985cd9b80d5f7d977a5aab9a305abc354"
-  integrity sha1-tmMV2YXNm4DV99l3paq5owWrw1Q=
+  version "0.4.3"
+  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/recharts-scale/-/recharts-scale-0.4.3.tgz#040b4f638ed687a530357292ecac880578384b59"
+  integrity sha1-BAtPY47Wh6UwNXKS7KyIBXg4S1k=
   dependencies:
     decimal.js-light "^2.4.1"
 
@@ -9084,8 +9084,8 @@ saxes@^3.1.9:
 
 scheduler@^0.17.0:
   version "0.17.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.17.0.tgz#7c9c673e4ec781fac853927916d1c426b6f3ddfe"
-  integrity sha512-7rro8Io3tnCPuY4la/NuI5F2yfESpnfZyT6TtkXnSWVkcu0BCDJ+8gk5ozUaFaxpIyNuWAPXrH0yFcSi28fnDA==
+  resolved "http://drt-ep-artifactory-dev-1.eng.nutanix.com:8081/artifactory/api/npm/canaveral-npm-virtual/scheduler/-/scheduler-0.17.0.tgz#7c9c673e4ec781fac853927916d1c426b6f3ddfe"
+  integrity sha1-fJxnPk7HgfrIU5J5FtHEJrbz3f4=
   dependencies:
     loose-envify "^1.1.0"
     object-assign "^4.1.1"

@@ -1,13 +1,13 @@
 //
 // Copyright (c) 2019 Nutanix Inc. All rights reserved.
 //
-import React, { forwardRef } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import styles from '../Styles';
 
 const testId = 'viz-connector';
 
-const VizConnector = forwardRef(({ children, style, isActive }, ref) => (
+const VizConnector = ({ children, style, isActive, assignRef }) => (
   <div
     data-testid={testId}
     style={Object.assign(
@@ -16,17 +16,19 @@ const VizConnector = forwardRef(({ children, style, isActive }, ref) => (
       style,
       isActive ? styles.vizConnectorActive : {}
     )}
-    ref={ref}
+    ref={assignRef}
   >
     {children}
   </div>
-));
+);
 
 VizConnector.propTypes = {
   /** Custom styles on div element **/
   style: PropTypes.object,
   /** Render the blue border around the box if true **/
-  isActive: PropTypes.bool
+  isActive: PropTypes.bool,
+  // This is to pass the ref prop
+  assignRef: PropTypes.func
 };
 
 VizConnector.testId = testId;

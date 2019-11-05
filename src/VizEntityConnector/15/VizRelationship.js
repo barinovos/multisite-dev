@@ -1,7 +1,7 @@
 //
 // Copyright (c) 2019 Nutanix Inc. All rights reserved.
 //
-import React, { Fragment } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { calcPosition, calcWidthHeightPath } from '../utils/VizUtil';
 import VizPath from '../VizPath';
@@ -26,7 +26,7 @@ const VizRelationship = ({
     offset
   );
   return (
-    <Fragment>
+    <div>
       <VizPath
         position={position}
         width={width}
@@ -36,7 +36,7 @@ const VizRelationship = ({
         isDisabled={isDisabled}
       />
       {children}
-    </Fragment>
+    </div>
   );
 };
 

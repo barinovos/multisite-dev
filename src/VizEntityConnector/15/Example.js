@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from 'react';
+import React from 'react';
 import { Link, PlusIcon, Title, Select, OrderedList } from 'prism-reactjs';
 import VizEntityConnector from './VizEntityConnector';
 
@@ -41,44 +41,50 @@ const SampleConnector = ({
     </div>
   );
 
-const SampleSubLevel = ({ text }) => {
-  const [collapsed, changeState] = useState(true);
+class SampleSubLevel extends React.Component {
+  state = {
+    collapsed: true
+  };
 
-  return (
-    <div style={styles.textCenter}>
-      {collapsed ? (
-        <Link
-          type="with-icon"
-          icon={<PlusIcon size="small" />}
-          onClick={() => changeState(false)}
-        >
-          {text}
-        </Link>
-      ) : (
-        <OrderedList
-          data={[
-            'Some elements goes here',
-            'One more element and maybe a link:',
-            <Link onClick={() => changeState(true)}>Collapse me back</Link>
-          ]}
-        />
-      )}
-    </div>
-  );
-};
+  render() {
+    return (
+      <div style={styles.textCenter}>
+        {this.state.collapsed ? (
+          <Link
+            type="with-icon"
+            icon={<PlusIcon size="small" />}
+            onClick={() => this.setState({ collapsed: false })}
+          >
+            {this.props.text}
+          </Link>
+        ) : (
+          <OrderedList
+            data={[
+              'Some elements goes here',
+              'One more element and maybe a link:',
+              <Link onClick={() => this.setState({ collapsed: true })}>
+                Collapse me back
+              </Link>
+            ]}
+          />
+        )}
+      </div>
+    );
+  }
+}
 
 const data = [
   {
     key: 1,
-    label: 'puppyfood'
+    title: 'puppyfood'
   },
   {
     key: 2,
-    label: 'Peach'
+    title: 'Peach'
   },
   {
     key: 3,
-    label: 'galesbure'
+    title: 'galesbure'
   }
 ];
 
@@ -87,19 +93,19 @@ const getLevels = () => [
     <Title size="h2" style={{ marginBottom: 15 }}>
       Primary location
     </Title>
-    <Select rowsData={data} />
+    <Select selectOptions={data} />
     <SampleSubLevel text="I am primary" />
   </div>,
   <div>
-    <Select rowsData={data} />
+    <Select selectOptions={data} />
     <SampleSubLevel text="I am Secondary" />
   </div>,
   <div>
-    <Select rowsData={data} />
-    <SampleSubLevel text="I am Thrird" />
+    <Select selectOptions={data} />
+    <SampleSubLevel text="I am Third" />
   </div>,
   <div>
-    <Select rowsData={data} />
+    <Select selectOptions={data} />
     <SampleSubLevel text="I am Fourth" />
   </div>
 ];
@@ -160,44 +166,50 @@ const getConnectors = (
   />
 ];
 
-const Example = () => {
-  // State:
-  const [activeConnector, updateActiveConnector] = useState(null);
-  const [disabledConnection] = useState(3);
-  const [locationsAmount, updateLocations] = useState(2);
-  const Levels = getLevels();
-  // Methods:
-  const onCollapse = () => updateActiveConnector(null);
-  const addLocations = () =>
-    locationsAmount < Levels.length && updateLocations(locationsAmount + 1);
-  const deleteLocation = () =>
-    locationsAmount > 2 && updateLocations(locationsAmount - 1);
+class Example extends React.Component {
+  state = {
+    activeConnector: null,
+    disabledConnection: 3,
+    locationsAmount: 2
+  };
 
-  return (
-    <Fragment>
-      <div style={styles.topContainer}>
-        <Link onClick={addLocations} className="viz-link">
-          Add location
-        </Link>
-        <Link type="delete" onClick={deleteLocation}>
-          Remove location
-        </Link>
+  render() {
+    const { activeConnector, disabledConnection, locationsAmount } = this.state;
+    const Levels = getLevels();
+    const onCollapse = () => this.setState({ activeConnector: null });
+    const addLocations = () =>
+      locationsAmount < Levels.length &&
+      this.setState({ locationsAmount: locationsAmount + 1 });
+    const deleteLocation = () =>
+      locationsAmount > 2 &&
+      this.setState({ locationsAmount: locationsAmount - 1 });
+
+    return (
+      <div style={{ height: '100%' }}>
+        <div style={styles.topContainer}>
+          <Link onClick={addLocations} className="viz-link">
+            Add location
+          </Link>
+          <Link type="delete" onClick={deleteLocation}>
+            Remove location
+          </Link>
+        </div>
+        <div style={styles.mainContainer}>
+          <VizEntityConnector
+            levels={Levels.slice(0, locationsAmount)}
+            connectors={getConnectors(
+              disabledConnection,
+              activeConnector,
+              activeConnector => this.setState({ activeConnector }),
+              onCollapse
+            )}
+            activeConnection={activeConnector}
+            disabledConnection={disabledConnection}
+          />
+        </div>
       </div>
-      <div style={styles.mainContainer}>
-        <VizEntityConnector
-          levels={Levels.slice(0, locationsAmount)}
-          connectors={getConnectors(
-            disabledConnection,
-            activeConnector,
-            updateActiveConnector,
-            onCollapse
-          )}
-          activeConnection={activeConnector}
-          disabledConnection={disabledConnection}
-        />
-      </div>
-    </Fragment>
-  );
-};
+    );
+  }
+}
 
 export default Example;
