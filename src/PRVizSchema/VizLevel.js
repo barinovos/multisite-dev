@@ -3,13 +3,12 @@
 //
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from '../Styles';
 
 const testId = 'viz-level';
 
-const VizLevel = ({ children, style, assignRef }) => (
+const VizLevel = ({ children, className, assignRef }) => (
   <div
-    style={{ ...styles.vizLevel, ...style }}
+    className={`viz-level ${className}`}
     ref={assignRef}
     data-testid={testId}
   >
@@ -18,8 +17,8 @@ const VizLevel = ({ children, style, assignRef }) => (
 );
 
 VizLevel.propTypes = {
-  /** Custom styles on div element **/
-  style: PropTypes.object,
+  /** Class on div element **/
+  className: PropTypes.string,
   // This is to pass the ref prop
   assignRef: PropTypes.func
 };

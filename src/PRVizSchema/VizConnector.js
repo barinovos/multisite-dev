@@ -3,19 +3,13 @@
 //
 import React from 'react';
 import PropTypes from 'prop-types';
-import styles from '../Styles';
 
 const testId = 'viz-connector';
 
-const VizConnector = ({ children, style, isActive, assignRef }) => (
+const VizConnector = ({ children, className, assignRef }) => (
   <div
     data-testid={testId}
-    style={Object.assign(
-      {},
-      styles.vizConnector,
-      style,
-      isActive ? styles.vizConnectorActive : {}
-    )}
+    className={className}
     ref={assignRef}
   >
     {children}
@@ -23,10 +17,8 @@ const VizConnector = ({ children, style, isActive, assignRef }) => (
 );
 
 VizConnector.propTypes = {
-  /** Custom styles on div element **/
-  style: PropTypes.object,
-  /** Render the blue border around the box if true **/
-  isActive: PropTypes.bool,
+  /** Class on div element **/
+  className: PropTypes.string,
   // This is to pass the ref prop
   assignRef: PropTypes.func
 };

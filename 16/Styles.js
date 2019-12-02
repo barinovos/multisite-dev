@@ -4,7 +4,7 @@ import {
   MIN_CONNECTION_HEIGHT,
   LEVEL_WIDTH,
   CONNECTOR_WIDTH
-} from './utils/VizConstants'
+} from './utils/VizConstants';
 
 export default {
   container: {
@@ -49,11 +49,11 @@ export default {
     borderRadius: 4,
     padding: '.5em 1em'
   },
-  vizConnectorActive :{
-    border: `1px solid ${Colors.blue}`,
+  vizConnectorActive: {
+    border: `1px solid ${Colors.blue}`
   },
   vizConnectorAbsolute: {
     position: 'absolute',
     left: `calc(50% - ${CONNECTOR_WIDTH / 2}px)`
   }
-}
+};

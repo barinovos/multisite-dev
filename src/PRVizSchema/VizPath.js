@@ -3,22 +3,21 @@
 //
 // An SVG Path Component.
 //
-import React from 'react'
-import PropTypes from 'prop-types'
-import { Colors, DASH_STROKE, NO_DASH_STROKE } from './utils/VizConstants'
+import React from 'react';
+import PropTypes from 'prop-types';
 
-const testId = 'viz-path'
+const testId = 'viz-path';
 
 const VizPath = ({ d, position, width, height, isDisabled, isActive }) => (
   <svg style={position} width={width} height={height} data-testid={testId}>
     <path
       d={d}
-      stroke={isActive ? Colors.blue : Colors.gray0}
-      strokeDasharray={isDisabled ? DASH_STROKE : NO_DASH_STROKE}
-      fill="none"
+      className={`viz-path ${
+        isDisabled ? 'disabled' : isActive ? 'active' : ''
+      }`}
     />
   </svg>
-)
+);
 
 VizPath.propTypes = {
   /** Custom position, which render as styles on SVG **/
@@ -33,8 +32,8 @@ VizPath.propTypes = {
   width: PropTypes.number,
   /** The actual Height of the SVG **/
   height: PropTypes.number
-}
+};
 
-VizPath.testId = testId
+VizPath.testId = testId;
 
-export default VizPath
+export default VizPath;

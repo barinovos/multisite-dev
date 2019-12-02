@@ -5,12 +5,16 @@
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.2",
     "@testing-library/react": "^9.3.1",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-15": "^1.4.1",
     "lodash": "^4.17.15",
-    "prism-reactjs": "^2.0.0",
+    "prism-reactjs": "1.11.3",
     "prop-types": "^15.7.2",
-    "react": "^16.11.0",
-    "react-dom": "^16.11.0",
-    "react-scripts": "3.2.0"
+    "react": "15.6.2",
+    "react-dom": "15.6.2",
+    "react-scripts": "3.2.0",
+    "react-test-renderer": "15.6.2",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "start": "react-scripts start",

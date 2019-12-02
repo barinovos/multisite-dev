@@ -1,0 +1,68 @@
+.viz-link {
+  margin-right: 2em;
+}
+
+.viz-container {
+  position: relative;
+  height: 100%;
+  min-width: 1050px;
+  min-height: 650px;
+}
+
+.viz-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.viz-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.viz-column-middle {
+  padding: 1em 0 3.1em;
+}
+
+.viz-hidden {
+  visibility: hidden;
+}
+
+.viz-level {
+  width: 300px;
+  min-height: 70px;
+}
+
+.viz-connector {
+  width: 270px;
+  min-height: 40px;
+}
+
+.viz-connector.center-top {
+  position: absolute;
+  left: calc(50% - 135px);
+  top: 30%;
+}
+
+.viz-connector.center-bottom {
+  position: absolute;
+  left: calc(50% - 135px);
+  top: 60%;
+}
+
+.viz-path {
+  stroke: #b8bfca;
+  fill: none;
+}
+
+.viz-path.active {
+  stroke: #22a5f7;
+}
+
+.viz-path.disabled {
+  stroke-dasharray: 5, 5;
+}

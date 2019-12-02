@@ -3,13 +3,12 @@
 //
 import React from 'react';
 import PropTypes from 'prop-types';
-import { calcPosition, calcWidthHeightPath } from '../utils/VizUtil';
-import VizPath from '../VizPath';
+import { calcPosition, calcWidthHeightPath } from './Util';
+import VizPath from './VizPath';
 
 const VizRelationship = ({
   fromRef,
   toRef,
-  children,
   direction,
   isDisabled = false,
   isActive = false,
@@ -26,7 +25,6 @@ const VizRelationship = ({
     offset
   );
   return (
-    <div>
       <VizPath
         position={position}
         width={width}
@@ -35,8 +33,6 @@ const VizRelationship = ({
         isActive={isActive}
         isDisabled={isDisabled}
       />
-      {children}
-    </div>
   );
 };
 
