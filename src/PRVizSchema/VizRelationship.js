@@ -14,8 +14,6 @@ const VizRelationship = ({
   isActive = false,
   offset
 }) => {
-  if (!fromRef || !toRef) return null;
-
   const position = calcPosition(direction, fromRef, toRef, offset);
   const { width, height, d } = calcWidthHeightPath(
     direction,
@@ -25,15 +23,20 @@ const VizRelationship = ({
     offset
   );
   return (
-      <VizPath
-        position={position}
-        width={width}
-        height={height}
-        d={d}
-        isActive={isActive}
-        isDisabled={isDisabled}
-      />
+    <VizPath
+      style={ position }
+      width={ width }
+      height={ height }
+      d={ d }
+      isActive={ isActive }
+      isDisabled={ isDisabled }
+    />
   );
+};
+
+VizRelationship.defaultProps = {
+  fromRef: {},
+  toRef: {}
 };
 
 VizRelationship.propTypes = {

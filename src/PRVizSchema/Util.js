@@ -5,14 +5,28 @@
 //
 import { DIRECTIONS } from './Constants';
 
+/**
+ * Calc the position
+ * @param {string} direction - direction from Constants
+ * @param {object} fromRef - DOM ref from
+ * @param {object} toRef - DOM ref to
+ * @param {object} offset - object with offset values
+ * @returns {object} - position object with 'left', 'top' and
+ * position: 'absolute', zIndex: -1 fields
+ */
 export const calcPosition = (direction, fromRef, toRef, offset) => {
-  const position = { position: 'absolute', zIndex: -1 };
-  if (!direction || !fromRef) return position;
+  const position = {
+    position: 'absolute',
+    zIndex: -1
+  };
+  if (!direction || !fromRef) {
+    return position;
+  }
   switch (direction) {
     case DIRECTIONS.LEFT_TO_RIGHT:
       position.left = fromRef.offsetLeft + fromRef.clientWidth;
       position.top = offset.bottom
-        ? fromRef.offsetTop + fromRef.clientHeight - offset.bottom
+        ? fromRef.offsetTop + (fromRef.clientHeight - offset.bottom)
         : fromRef.offsetTop + offset.top;
       return position;
     case DIRECTIONS.LEFT_TOP_TO_RIGHT_DIAG:
@@ -20,7 +34,7 @@ export const calcPosition = (direction, fromRef, toRef, offset) => {
       position.top = fromRef.offsetTop + offset.top;
       return position;
     case DIRECTIONS.TOP_TO_BOTTOM:
-      position.left = fromRef.offsetLeft + fromRef.clientWidth / 2;
+      position.left = fromRef.offsetLeft + (fromRef.clientWidth / 2);
       position.top = fromRef.offsetTop;
       return position;
     case DIRECTIONS.LEFT_BOTTOM_TO_RIGHT_DIAG:
@@ -32,6 +46,15 @@ export const calcPosition = (direction, fromRef, toRef, offset) => {
   }
 };
 
+/**
+ * Calc width and height for Path element
+ * @param {string} direction - direction from Constants
+ * @param {object} fromRef - DOM ref from
+ * @param {object} toRef - DOM ref to
+ * @param {object} position - position object with 'left', 'top'
+ * @param {object} offset - object with offset values
+ * @returns {object} - object with 'width', 'height' and 'd' fields
+ */
 export const calcWidthHeightPath = (
   direction,
   fromRef,
@@ -39,8 +62,14 @@ export const calcWidthHeightPath = (
   position,
   offset
 ) => {
-  const params = { width: 0, height: 0, d: '' };
-  if (!fromRef || !toRef || !direction || !position) return params;
+  const params = {
+    width: 0,
+    height: 0,
+    d: ''
+  };
+  if (!fromRef || !toRef || !direction || !position) {
+    return params;
+  }
   switch (direction) {
     case DIRECTIONS.LEFT_TO_RIGHT:
       params.width = Math.abs(toRef.offsetLeft - position.left);
@@ -51,9 +80,9 @@ export const calcWidthHeightPath = (
       params.width = Math.abs(toRef.offsetLeft - position.left);
       params.height = offset.bottom
         ? Math.abs(
-            position.top -
-              (toRef.offsetTop + toRef.clientHeight - offset.bottom)
-          )
+          position.top -
+          ((toRef.offsetTop + toRef.clientHeight) - offset.bottom)
+        )
         : Math.abs(toRef.offsetTop - position.top) + offset.alternate;
       // in case it is 0 - straight line
       params.height = params.height || 1;
@@ -64,15 +93,15 @@ export const calcWidthHeightPath = (
     case DIRECTIONS.TOP_TO_BOTTOM:
       params.width = 1;
       params.height = Math.abs(
-        toRef.offsetTop - position.top + toRef.clientHeight
+        (toRef.offsetTop - position.top) + toRef.clientHeight
       );
       params.d = `M 0 0 L 1 ${params.height}`;
       return params;
     case DIRECTIONS.LEFT_BOTTOM_TO_RIGHT_DIAG:
       params.width = Math.abs(toRef.offsetLeft - position.left);
       params.height = offset.bottom
-        ? Math.abs(fromRef.offsetTop + fromRef.clientHeight - position.top) -
-          offset.bottom
+        ? Math.abs(fromRef.offsetTop + (fromRef.clientHeight - position.top)) -
+        offset.bottom
         : Math.abs(fromRef.offsetTop - position.top) + offset.alternate;
       // in case it is 0 - straight line
       params.height = params.height || 1;

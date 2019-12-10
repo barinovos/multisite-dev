@@ -1,9 +1,7 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { Link } from 'prism-reactjs';
 import Collapsible from './Collapsible';
 
-const getTestIdSelector = id => `[data-testid="${id}"]`;
 let wrapper;
 
 describe('Collapsible component should', () => {
@@ -25,7 +23,7 @@ describe('Collapsible component should', () => {
 
       expect(wrapper.exists({ expanded: false })).toBe(true);
     });
-  })
+  });
 
   it('not render a children, until is expanded', () => {
     const children = <span>Hello</span>;
@@ -38,14 +36,14 @@ describe('Collapsible component should', () => {
     const children = <span>Hello</span>;
     wrapper = mount(<Collapsible>{children}</Collapsible>);
 
-    wrapper.find(getTestIdSelector('pr-collapsible')).at(0).simulate('click');
+    wrapper.findByTestId('pr-collapsible').at(0).simulate('click');
 
     expect(wrapper.contains(children)).toBe(true);
   });
 
   it('render header', () => {
     const header = <span>I am a header</span>;
-    wrapper = mount(<Collapsible header={header}/>);
+    wrapper = mount(<Collapsible header={ header } />);
 
     expect(wrapper.contains(header)).toBe(true);
   });

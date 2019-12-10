@@ -8,9 +8,9 @@ const testId = 'viz-connector';
 
 const VizConnector = ({ children, className, assignRef }) => (
   <div
-    data-testid={testId}
-    className={className}
-    ref={assignRef}
+    data-testid={ testId }
+    className={ className }
+    ref={ assignRef }
   >
     {children}
   </div>

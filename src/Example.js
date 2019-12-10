@@ -27,7 +27,7 @@ const sampleSchedule = {
   type: 'App consistent'
 };
 
-const locationsList = [
+const azList = [
   {
     key: 1,
     value: 'local',
@@ -72,7 +72,7 @@ const mockEditData = {
   locations: [
     {
       id: ids.primeLocation,
-      locationName: locationsList[0].title,
+      locationName: azList[0].title,
       clusterName: clustersList[1].title,
       localSchedule: sampleSchedule
     }
@@ -84,13 +84,13 @@ const mockViewData = {
   locations: [
     {
       id: ids.primeLocation,
-      locationName: locationsList[0].title,
+      locationName: azList[0].title,
       clusterName: clustersList[0].title,
       localSchedule: sampleSchedule
     },
     {
       id: ids.secondaryLocation,
-      locationName: locationsList[1].title,
+      locationName: azList[1].title,
       clusterName: clustersList[1].title,
       localSchedule: sampleSchedule
     }
@@ -109,19 +109,19 @@ const mockViewExtendedData = {
   locations: [
     {
       id: ids.primeLocation,
-      locationName: locationsList[0].title,
+      locationName: azList[0].title,
       clusterName: clustersList[0].title,
       localSchedule: sampleSchedule
     },
     {
       id: ids.secondaryLocation,
-      locationName: locationsList[1].title,
+      locationName: azList[1].title,
       clusterName: clustersList[1].title,
       localSchedule: sampleSchedule
     },
     {
       id: ids.thirdLocation,
-      locationName: locationsList[2].title,
+      locationName: azList[2].title,
       clusterName: clustersList[1].title,
       localSchedule: sampleSchedule
     }
@@ -149,6 +149,7 @@ const mockViewExtendedData = {
 };
 
 export default class Example extends React.PureComponent {
+
   state = {
     isEditMode: true,
     data: null,
@@ -233,29 +234,30 @@ export default class Example extends React.PureComponent {
     return (
       <div className="all-height">
         <NavBarLayout
-          accountActions={accountActions}
-          accountInfo={account}
-          eventsTasksInfo={[]}
-          layout={NavBarLayout.LAYOUTS.LEFT}
+          accountActions={ accountActions }
+          accountInfo={ account }
+          eventsTasksInfo={ [] }
+          layout={ NavBarLayout.LAYOUTS.LEFT }
           logoIcon={
             <a href="/">
               <NutanixLogoIcon color="gray-1" />
             </a>
           }
-          menuItems={menuItems}
+          menuItems={ menuItems }
           title="Protection Rule"
         />
-        <div style={{ height: 'calc(100% - 60px)' }}>
+        <div style={ { height: 'calc(100% - 60px)' } }>
           <PRVizContainer
-            key={key}
-            isEditMode={isEditMode}
-            data={data}
-            clustersList={clustersList}
-            locationsList={locationsList}
+            key={ key }
+            isEditMode={ isEditMode }
+            data={ data }
+            azList={ azList }
+            clustersList={ clustersList }
             localAZ="Local AZ"
           />
         </div>
       </div>
     );
   }
+
 }

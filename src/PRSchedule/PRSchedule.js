@@ -1,44 +1,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLabel, FlexLayout, Link } from 'prism-reactjs';
+import { TextLabel, FlexLayout } from 'prism-reactjs';
 import Collapsible from '../Shared/Collapsible';
 
-const PRSchedule = ({ data, onCreate, disabled, active }) => {
-  if (!data) {
-    return (
-      <div className="pr-button">
-        <Link
-          type="with-icon"
-          onClick={onCreate}
-          disabled={disabled}
-          data-testid="add-schedule"
-        >
-          Add Schedule
-        </Link>
-      </div>
-    );
-  }
-  const { frequency, rpThreshold, type } = data;
+const PRSchedule = ({ data, onEdit, active, isEditMode }) => {
+  const { frequency = '', rpThreshold = '', type } = data || {};
 
   const Header = (
-    <FlexLayout>
+    <div>
       <TextLabel>RPO: </TextLabel>
-      <TextLabel type={TextLabel.TEXT_LABEL_TYPE.PRIMARY}>
+      <TextLabel type={ TextLabel.TEXT_LABEL_TYPE.PRIMARY }>
         {frequency}
       </TextLabel>
-    </FlexLayout>
+    </div>
   );
 
   return (
-    <div className={`pr-schedule ${active ? 'active' : ''}`}>
-      <Collapsible header={Header}>
+    <div
+      className={ `pr-schedule ${active ? 'active' : ''}` }
+      onClick={ () => isEditMode && onEdit(data) }
+    >
+      <Collapsible header={ Header }>
         <FlexLayout
           alignItems="center"
           justifyContent="space-between"
           className="pr-margin-bottom"
         >
-          <TextLabel>Local AZ: Peach Seeds</TextLabel>
-          <TextLabel type={TextLabel.TEXT_LABEL_TYPE.PRIMARY}>
+          <TextLabel className="text-ellipsis">Local AZ: Peach Seeds</TextLabel>
+          <TextLabel
+            type={ TextLabel.TEXT_LABEL_TYPE.PRIMARY }
+            className="text-ellipsis"
+          >
             {rpThreshold} Recovery Points
           </TextLabel>
         </FlexLayout>
@@ -54,9 +46,9 @@ PRSchedule.propTypes = {
     rpThreshold: PropTypes.number,
     type: PropTypes.string
   }),
-  disabled: PropTypes.bool,
   active: PropTypes.bool,
-  onCreate: PropTypes.func
+  isEditMode: PropTypes.bool,
+  onEdit: PropTypes.func
 };
 
 export default PRSchedule;

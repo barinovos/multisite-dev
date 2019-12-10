@@ -1,9 +1,6 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
 import { TextLabel } from 'prism-reactjs';
 import PRLocalSchedule from './PRLocalSchedule';
-
-const getTestIdSelector = id => `[data-testid="${id}"]`;
 
 describe('PRLocalSchedule component should', () => {
   it('render text labels', () => {
@@ -26,26 +23,26 @@ describe('PRLocalSchedule component should', () => {
     const type = 'App consistent';
     const wrapper = mount(
       <PRLocalSchedule
-        frequency={frequency}
-        rpThreshold={rpThreshold}
-        type={type}
+        frequency={ frequency }
+        rpThreshold={ rpThreshold }
+        type={ type }
       />
     );
     wrapper
-      .find(getTestIdSelector('pr-collapsible'))
+      .findByTestId('pr-collapsible')
       .at(0)
       .simulate('click');
 
     expect(
       wrapper.contains(
-        <TextLabel type={TextLabel.TEXT_LABEL_TYPE.PRIMARY}>
+        <TextLabel type={ TextLabel.TEXT_LABEL_TYPE.PRIMARY }>
           {frequency}
         </TextLabel>
       )
     ).toBe(true);
     expect(
       wrapper.contains(
-        <TextLabel type={TextLabel.TEXT_LABEL_TYPE.PRIMARY}>
+        <TextLabel type={ TextLabel.TEXT_LABEL_TYPE.PRIMARY }>
           {rpThreshold} Recovery Points
         </TextLabel>
       )

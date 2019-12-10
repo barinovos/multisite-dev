@@ -27,9 +27,7 @@ code {
   border: 1px solid #b8bfca;
   border-radius: 4px;
   padding: 0.5em 1em;
-  text-align: center;
 }
-
 
 .text-opacity {
   opacity: 0.4;
@@ -43,6 +41,12 @@ code {
 
 .text-center {
   text-align: center;
+}
+
+.text-ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .all-height {
@@ -74,7 +78,21 @@ code {
   min-height: 70px;
   border-radius: 4px;
   border-color: transparent;
-  padding: 1em;
+  padding: 20px 15px 15px;;
+}
+
+.pr-location-edit {
+  background: white;
+  border: 1px solid #22a5f7;
+  border-radius: 4px;
+}
+
+.pr-top-inner-padding {
+  padding: 15px 15px 0;
+}
+
+.pr-bottom-inner-padding {
+  padding: 15px;
 }
 
 .pr-schedule {
@@ -83,7 +101,7 @@ code {
   min-height: 40px;
   border: 1px solid #b8bfca;
   border-radius: 4px;
-  padding: 0.5em 1em;
+  padding: 11px 10px;
 }
 
 .pr-schedule.active {

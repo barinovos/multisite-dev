@@ -1,0 +1,14 @@
+{
+  "extends": [
+    "./react_eslint.js"
+  ],
+  "rules": {
+    "react/no-danger": "off",
+    "no-confusing-arrow": "off"
+  },
+  "globals": {
+    "mount": "writable",
+    "shallow": "writable",
+    "jest": "readonly"
+  }
+}

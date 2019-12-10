@@ -1,34 +1,77 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Select, Input } from 'prism-reactjs';
+import {
+  ElementPlusLabel,
+  Select,
+  FlexLayout,
+  Link,
+  Divider
+} from 'prism-reactjs';
 
 const PRLocation = ({
-    locationsList, clustersList,
-    mode = 'view', location, cluster
-  }) => {
+  azList,
+  clustersList,
+  azName,
+  clusterName,
+  isPrimary,
+  onChangeAZ,
+  onChangeCluster,
+  onSave,
+  onCancel
+}) => {
   return (
-    <div className="pr-margin-bottom">
-      {mode === 'view' && <Input defaultValue={`${location}: ${cluster}`} />}
-      {mode === 'edit' && (
-        <div>
-          <Select selectOptions={locationsList} />
-          <Select selectOptions={clustersList} />
-        </div>
-      )}
+    <div className="pr-location-edit pr-margin-bottom">
+      <div className="pr-top-inner-padding">
+        {!isPrimary && (
+          <h4 className="ntnx pr-margin-bottom">Recovery location</h4>
+        )}
+        <ElementPlusLabel
+          label="Location"
+          className="pr-margin-bottom"
+          element={
+            <Select
+              disabled={ isPrimary }
+              selectOptions={ azList }
+              value={ azName }
+              onChange={ onChangeAZ }
+            />
+          }
+        />
+        <ElementPlusLabel
+          label="Cluster"
+          className="pr-margin-bottom"
+          element={
+            <Select
+              selectOptions={ clustersList }
+              value={ clusterName }
+              onChange={ onChangeCluster }
+            />
+          }
+        />
+      </div>
+      <Divider />
+      <div className="pr-bottom-inner-padding">
+        <FlexLayout alignItems="center" justifyContent="flex-end">
+          {!isPrimary && <Link onClick={ onCancel }>Cancel</Link>}
+          <Link disabled={ !clusterName || !azName } onClick={ onSave }>
+            Save
+          </Link>
+        </FlexLayout>
+      </div>
     </div>
   );
 };
 
-PRLocation.defaultProps = {
-  mode: 'view'
-};
-
 PRLocation.propTypes = {
-  locationsList: PropTypes.array,
+  azList: PropTypes.array,
   clustersList: PropTypes.array,
-  location: PropTypes.string,
-  cluster: PropTypes.string,
-  mode: PropTypes.string
+  azName: PropTypes.string,
+  clusterName: PropTypes.string,
+  isPrimary: PropTypes.bool,
+  onChangeAZ: PropTypes.func,
+  onChangeCluster: PropTypes.func,
+  onSave: PropTypes.func,
+  onCancel: PropTypes.func
 };
 
 export default PRLocation;

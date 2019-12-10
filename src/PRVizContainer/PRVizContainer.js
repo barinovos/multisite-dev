@@ -6,15 +6,17 @@ import PRVizSchema from '../PRVizSchema';
 import { DIRECTIONS, CONNECTOR_POSITION } from '../PRVizSchema/Constants';
 import PRLocationParent from '../PRLocation';
 import PRSchedule from '../PRSchedule';
+import PREntityPlaceholder from '../PREntityPlaceholder';
 
 export default class PRContainer extends React.Component {
+
   static propTypes = {
     data: PropTypes.shape({
       locations: PropTypes.array,
       schedules: PropTypes.array
     }),
     isEditMode: PropTypes.bool,
-    locationsList: PropTypes.array.isRequired,
+    azList: PropTypes.array.isRequired,
     clustersList: PropTypes.array.isRequired,
     localAZ: PropTypes.string.isRequired
   };
@@ -28,66 +30,75 @@ export default class PRContainer extends React.Component {
     );
   }
 
-  onUpdateLocation = (id, scheduleId) => {
-    const { clustersList, locationsList } = this.props;
+  onUpdateLocation = (id, scheduleId, fromPlaceholder) => {
+    const { clustersList, azList } = this.props;
     const { locations, schedules } = this.state;
     this.setState({
       locations: locations.map(Location =>
         Location.id === id
           ? {
-              id,
-              element: (
-                <PRLocationParent
-                  locationsList={locationsList}
-                  clustersList={clustersList}
-                  data={{
-                    locationName: '',
-                    clusterName: ''
-                  }}
-                />
-              )
-            }
+            id,
+            element: (
+              <PRLocationParent
+                key={ id }
+                isEditMode={ true }
+                isOpenForEdit={ true }
+                azList={ azList }
+                clustersList={ clustersList }
+                data={ {
+                  id,
+                  azName: '',
+                  clusterName: ''
+                } }
+              />
+            )
+          }
           : Location
       ),
       schedules: scheduleId
         ? schedules.map(Schedule =>
-            Schedule.id === scheduleId
-              ? {
-                  id: scheduleId,
-                  element: (
-                    <PRSchedule
-                      onCreate={() => this.onUpdateSchedule(scheduleId)}
-                    />
-                  )
-                }
-              : Schedule
-          )
+          Schedule.id === scheduleId
+            ? {
+              ...Schedule,
+              disabled: false,
+              element: fromPlaceholder ? (
+                <PREntityPlaceholder
+                  text={ 'Add Schedule' }
+                  onClick={ () => this.onUpdateSchedule(scheduleId) }
+                />
+              ) : (
+                <PRSchedule
+                  isEditMode={ true }
+                  data={ Schedule.data || { frequency: '2 hours' } }
+                  onCreate={ () => this.onUpdateSchedule(scheduleId) }
+                />
+              )
+            }
+            : Schedule
+        )
         : schedules
     });
   };
 
-  onUpdateSchedule = id => {
-    const { schedules, schema } = this.state;
+  onUpdateSchedule = (id, data) => {
     this.setState({
-      schedules: schedules.map(S =>
+      schedules: this.state.schedules.map(S =>
         S.id === id
           ? {
-              id,
-              element: <PRSchedule />
-            }
+            ...S,
+            // TODO: replace it just with data
+            element: <PRSchedule data={ data || { frequency: '2 hours' } } />
+          }
           : S
-      ),
-      schema: schema.map(s =>
-        s.connectionId === id ? { ...s, disabled: false } : s
       )
     });
   };
 
   onAddLocation = () => {
-    const { locations, schedules, schema } = this.state;
-    const { locationsList, clustersList } = this.props;
+    const { locations, schedules } = this.state;
+    const { azList, clustersList, isEditMode } = this.props;
     const currentLevel = locations.length;
-    if (currentLevel > 2) {
+    if (currentLevel > 2 || !isEditMode) {
       return;
     }
     const id = uuid();
@@ -96,97 +107,102 @@ export default class PRContainer extends React.Component {
       id,
       element: (
         <PRLocationParent
-          locationsList={locationsList}
-          clustersList={clustersList}
-          onCreate={() => this.onUpdateLocation(id, scheduleId)}
+          azList={ azList }
+          clustersList={ clustersList }
+          isOpenForEdit={ true }
+          isEditMode={ true }
+          data={ {
+            id,
+            azName: '',
+            clusterName: ''
+          } }
+          onCreate={ () => this.onUpdateLocation(id, scheduleId) }
         />
       )
     });
     const newSchedules = schedules.concat({
       id: scheduleId,
-      element: (
-        <PRSchedule
-          onCreate={() => this.onUpdateSchedule(scheduleId)}
-          disabled={true}
-        />
-      )
-    });
-    const newSchema = schema.concat({
       fromId: locations[currentLevel - 1].id,
       toId: id,
-      connectionId: scheduleId,
       disabled: true,
       direction:
         currentLevel === 1
           ? DIRECTIONS.LEFT_TO_RIGHT
           : DIRECTIONS.TOP_TO_BOTTOM,
       position:
-        currentLevel === 1 ? CONNECTOR_POSITION.TOP : CONNECTOR_POSITION.RIGHT
+        currentLevel === 1 ? CONNECTOR_POSITION.TOP : CONNECTOR_POSITION.RIGHT,
+      element: (
+        <PREntityPlaceholder
+          text={ 'Add Schedule' }
+          disabled={ true }
+          onCreate={ () => this.onUpdateSchedule(scheduleId) }
+        />
+      )
     });
     if (currentLevel === 2) {
-      const scheduleId = uuid();
+      const newScheduleId = uuid();
       newSchedules.push({
-        id: scheduleId,
-        element: (
-          <PRSchedule
-            onCreate={() => this.onUpdateSchedule(scheduleId)}
-            disabled={true}
-          />
-        )
-      });
-      newSchema.push({
+        id: newScheduleId,
         fromId: locations[0].id,
         toId: id,
-        connectionId: scheduleId,
         disabled: true,
         direction: DIRECTIONS.LEFT_TOP_TO_RIGHT_DIAG,
-        position: CONNECTOR_POSITION.BOTTOM
+        position: CONNECTOR_POSITION.BOTTOM,
+        element: (
+          <PREntityPlaceholder
+            text={ 'Add Schedule' }
+            disabled={ true }
+            onCreate={ () => this.onUpdateSchedule(newScheduleId) }
+          />
+        )
       });
     }
     this.setState({
       locations: newLocations,
-      schedules: newSchedules,
-      schema: newSchema
+      schedules: newSchedules
     });
   };
 
   onRemoveLocation = () => {
-    const { locations, schedules, schema } = this.state;
+    const { locations, schedules } = this.state;
     const currentLevel = locations.length;
     if (currentLevel < 2) {
       return;
     }
     this.setState({
       locations: locations.slice(0, -1),
-      schedules: schedules.slice(0, currentLevel === 3 ? -2 : -1),
-      schema: schema.slice(0, currentLevel === 3 ? -2 : -1)
+      schedules: schedules.slice(0, currentLevel === 3 ? -2 : -1)
     });
   };
 
   render() {
-    const { locations, schedules, schema } = this.state;
+    const { locations, schedules } = this.state;
     return (
       <div className="all-height">
         <div className="pr-viz-top-container">
-          <Link onClick={this.onAddLocation} className="viz-link">
+          <Link onClick={ this.onAddLocation } className="viz-link">
             Add location
           </Link>
-          <Link type="delete" onClick={this.onRemoveLocation}>
+          <Link type="delete" onClick={ this.onRemoveLocation }>
             Remove location
           </Link>
         </div>
         <div className="pr-viz-main-container">
-          <PRVizSchema
-            levels={locations}
-            connectors={schedules}
-            schema={schema}
-          />
+          <PRVizSchema levels={ locations } connectors={ schedules } />
         </div>
       </div>
     );
   }
+
 }
 
+/**
+ * Main method to map data to Schema
+ * @param {*} props - props from component
+ * @param {Function} onUpdateLocation - callback
+ * @param {Function} onUpdateSchedule - callback
+ * @returns {*} - State object
+ */
 export function mapDataToStateWithSchema(
   props,
   onUpdateLocation,
@@ -195,50 +211,45 @@ export function mapDataToStateWithSchema(
   if (props.data && props.data.locations) {
     const state = {
       locations: props.data.locations.map(
-        ({ id, locationName, clusterName, localSchedule }, i) => ({
+        ({ id, azName, clusterName, localSchedule }, i) => ({
           id,
           element: (
             <PRLocationParent
-              isPrimary={i === 0}
-              locationsList={props.locationsList}
-              clustersList={props.clustersList}
-              data={{
+              isPrimary={ i === 0 }
+              isOpenForEdit={ true }
+              isEditMode={ props.isEditMode }
+              azList={ props.azList }
+              clustersList={ props.clustersList }
+              data={ {
                 id,
-                locationName,
+                azName,
                 clusterName,
                 localSchedule
-              }}
+              } }
             />
           )
         })
       ),
-      schedules: props.data.schedules.map(sch => ({
+      schedules: props.data.schedules.map((sch, i) => ({
         id: sch.id,
+        fromId: sch.recoveredFromId,
+        toId: sch.recoveredToId,
+        disabled: !sch.data,
+        direction: sch.direction || setDefaultDirection(i),
+        position: sch.position || setDefaultPosition(i),
         element: (
           <PRSchedule
-            onCreate={() => onUpdateSchedule(sch.id)}
-            data={sch.data}
+            isEditMode={ props.isEditMode }
+            onCreate={ () => onUpdateSchedule(sch.id) }
+            data={ sch.data }
           />
         )
-      })),
-      schema: props.data.schedules.map((data, i) => ({
-        fromId: data.recoveredFromId,
-        toId: data.recoveredToId,
-        connectionId: data.id,
-        disabled: false,
-        direction: setDefaultDirection(i),
-        position: setDefaultPosition(i)
       }))
     };
     // This adds disabled elements for Recovery Location
     // and Schedule between them
     if (props.data.locations.length === 1 && props.isEditMode) {
-      pushEmptyElementsForLevelOne(
-        state,
-        props,
-        onUpdateLocation,
-        onUpdateSchedule
-      );
+      pushEmptyElementsForLevelOne(state, props, onUpdateLocation);
     }
     return state;
   } else if (props.isEditMode) {
@@ -251,29 +262,34 @@ export function mapDataToStateWithSchema(
             id: genId,
             element: (
               <PRLocationParent
-                isPrimary={true}
-                locationsList={props.locationsList}
-                clustersList={props.clustersList}
-                data={{
+                isPrimary={ true }
+                isOpenForEdit={ true }
+                isEditMode={ true }
+                azList={ props.azList }
+                clustersList={ props.clustersList }
+                data={ {
                   id: genId,
-                  locationName: props.localAZ,
+                  azName: props.localAZ,
                   clusterName: ''
-                }}
-                onCreate={() => onUpdateLocation(genId)}
+                } }
+                onCreate={ () => onUpdateLocation(genId) }
               />
             )
           }
         ]
       },
       props,
-      onUpdateLocation,
-      onUpdateSchedule
+      onUpdateLocation
     );
-  } else {
-    throw new Error('For View mode data is required!');
   }
+  throw new Error('For View mode data is required!');
 }
 
+/**
+ * Set default direction by index
+ * @param {number} index - index
+ * @returns {string} - direction value
+ */
 function setDefaultDirection(index) {
   switch (index) {
     case 1:
@@ -285,6 +301,11 @@ function setDefaultDirection(index) {
   }
 }
 
+/**
+ * Set default position by index
+ * @param {number} index - index
+ * @returns {string} - position value
+ */
 function setDefaultPosition(index) {
   switch (index) {
     case 1:
@@ -296,43 +317,35 @@ function setDefaultPosition(index) {
   }
 }
 
-function pushEmptyElementsForLevelOne(
-  state,
-  props,
-  onUpdateLocation,
-  onUpdateSchedule
-) {
+/**
+ * Add empty elements for Edit mode
+ * @param {Object} state - current state
+ * @param {*} props - props
+ * @param {Function} onUpdateLocation - callback
+ * @returns {Object} - modified state
+ */
+function pushEmptyElementsForLevelOne(state, props, onUpdateLocation) {
   const genId = uuid();
   const scheduleId = uuid();
   state.locations.push({
     id: genId,
     element: (
-      <PRLocationParent
-        locationsList={props.locationsList}
-        clustersList={props.clustersList}
-        onCreate={() => onUpdateLocation(genId, scheduleId)}
+      <PREntityPlaceholder
+        isLocation={ true }
+        text={ 'Add Recovery Location' }
+        onClick={ () => onUpdateLocation(genId, scheduleId, true) }
       />
     )
   });
   state.schedules = [
     {
       id: scheduleId,
-      element: (
-        <PRSchedule
-          disabled={true}
-          onCreate={() => onUpdateSchedule(scheduleId)}
-        />
-      )
-    }
-  ];
-  state.schema = [
-    {
       fromId: state.locations[0].id,
       toId: genId,
-      connectionId: scheduleId,
       disabled: true,
       direction: DIRECTIONS.LEFT_TO_RIGHT,
-      position: CONNECTOR_POSITION.TOP
+      position: CONNECTOR_POSITION.TOP,
+      element: <PREntityPlaceholder text={ 'Add Schedule' } disabled={ true } />
     }
   ];
   return state;

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Link, FlexLayout } from 'prism-reactjs';
 
 export default class Collapsible extends React.Component {
+
   static propTypes = {
     header: PropTypes.element,
     disabled: PropTypes.bool
@@ -18,15 +19,15 @@ export default class Collapsible extends React.Component {
     return (
       <div>
         <FlexLayout
-          alignItems="flex-end"
           data-testid="pr-collapsible"
-          onClick={() => this.setState({ expanded: !expanded })}
+          onClick={ () => this.setState({ expanded: !expanded }) }
         >
-          <Link type="expandable" expanded={expanded} disabled={disabled} />
+          <Link type="expandable" expanded={ expanded } disabled={ disabled } />
           {header}
         </FlexLayout>
         {expanded && <div className="pr-margin-top">{children}</div>}
       </div>
     );
   }
+
 }

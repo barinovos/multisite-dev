@@ -1,9 +1,7 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { TextLabel } from 'prism-reactjs';
 import PRSchedule from './PRSchedule';
 
-const getTestIdSelector = id => `[data-testid="${id}"]`;
 let wrapper;
 
 describe('PRSchedule component should', () => {
@@ -13,17 +11,29 @@ describe('PRSchedule component should', () => {
     }
   });
 
-  it('render a link "Add schedule", if no props provided', () => {
-    wrapper = mount(<PRSchedule />);
+  it('render a link "Add schedule" in Edit mode, if no props provided', () => {
+    wrapper = mount(<PRSchedule isEditMode={ true } />);
 
-    expect(wrapper.exists(getTestIdSelector('add-schedule'))).toBe(true);
-    expect(wrapper.exists(TextLabel)).toBe(false);
+    expect(wrapper.findByTestId('add-schedule').exists()).toBe(true);
   });
 
-  it('render everything, if props are provided', () => {
-    wrapper = mount(<PRSchedule frequency={'4 hours'}/>);
+  it('not render a link "Add schedule" in View mode, if no props provided', () => {
+    wrapper = mount(<PRSchedule />);
 
-    expect(wrapper.exists(getTestIdSelector('add-schedule'))).toBe(false);
+    expect(wrapper.findByTestId('add-schedule').exists()).toBe(false);
+  });
+
+  it('render TextLabels, if props are provided', () => {
+    const frequency = 'Some frequency';
+    wrapper = mount(<PRSchedule data={ { frequency } } />);
+
     expect(wrapper.contains(<TextLabel>RPO: </TextLabel>)).toBe(true);
+    expect(
+      wrapper.contains(
+        <TextLabel type={ TextLabel.TEXT_LABEL_TYPE.PRIMARY }>
+          {frequency}
+        </TextLabel>
+      )
+    ).toBe(true);
   });
 });

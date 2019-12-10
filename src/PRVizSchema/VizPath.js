@@ -8,20 +8,21 @@ import PropTypes from 'prop-types';
 
 const testId = 'viz-path';
 
-const VizPath = ({ d, position, width, height, isDisabled, isActive }) => (
-  <svg style={position} width={width} height={height} data-testid={testId}>
-    <path
-      d={d}
-      className={`viz-path ${
-        isDisabled ? 'disabled' : isActive ? 'active' : ''
-      }`}
-    />
+const VizPath = ({ d, style, width, height, isDisabled, isActive }) => (
+  <svg
+    style={ style }
+    width={ width }
+    height={ height }
+    data-testid={ testId }
+    className={ `viz-path${isDisabled ? ' disabled' : ''}${isActive ? ' active' : ''}` }
+  >
+    <path d={ d } />
   </svg>
 );
 
 VizPath.propTypes = {
-  /** Custom position, which render as styles on SVG **/
-  position: PropTypes.object,
+  /** Custom style (position), which render as styles on SVG **/
+  style: PropTypes.object,
   /** Path coordinates **/
   d: PropTypes.string.isRequired,
   /** Render the dashed line if true **/

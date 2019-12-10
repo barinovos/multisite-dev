@@ -14,11 +14,13 @@ import {
   BOTTOM_OFFSET,
   CONNECTION_TOP_OFFSET
 } from './Constants';
+// eslint-disable-next-line import/no-unassigned-import
 import './styles.css';
 
 const defaultOffset = { top: TOP_OFFSET };
 
 class PRVizSchema extends React.Component {
+
   constructor(props) {
     super(props);
 
@@ -40,19 +42,12 @@ class PRVizSchema extends React.Component {
     this.setRefs();
   }
 
-  componentWillReceiveProps(nextProps, nextContext) {
-    const { levels, connectors, schema } = this.props;
-    // Only Levels and Connectors matters to get a DOM access and set refs again
-    if (
-      nextProps.levels !== levels ||
-      nextProps.connectors !== connectors ||
-      nextProps.schema !== schema
-    ) {
-      // This is the workaround (10 is random):
-      // we should wait for Refs to re-calculate position
-      // and only then set state.refs
-      setTimeout(this.setRefs, 10);
-    }
+  componentWillReceiveProps() {
+    this.setState({ refsReady: null });
+    // This is the workaround (10 is random):
+    // we should wait for Refs to re-calculate position
+    // and only then set state.refs
+    setTimeout(this.setRefs, 10);
   }
 
   /*
@@ -71,43 +66,30 @@ class PRVizSchema extends React.Component {
 
   renderLevel(index) {
     const { levels } = this.props;
-    if (levels[index]) {
-      return (
-        <VizLevel assignRef={ref => (this.domRefs[levels[index].id] = ref)}>
-          {levels[index].element}
-        </VizLevel>
-      );
-    }
-    return <VizLevel className="viz-hidden" />;
+    return levels[index] ? (
+      <VizLevel assignRef={ ref => (this.domRefs[levels[index].id] = ref) }>
+        {levels[index].element}
+      </VizLevel>
+    ) : <VizLevel className="viz-hidden" />;
   }
 
   renderConnection(position) {
-    const { connectors, schema } = this.props;
-    const FlexPlaceholder = <VizConnector className="viz-hidden" />;
-    const schemaItem = schema.find(con => con.position === position);
-    if (!schemaItem) {
-      return FlexPlaceholder;
-    }
-    const connection = connectors.find(
-      con => con.id === schemaItem.connectionId
-    );
-    if (!connection) {
-      throw new Error(`Provided schema doesn't match connections array`);
-    }
-    return (
+    const { connectors } = this.props;
+    const connection = connectors.find(con => con.position === position);
+    return connection ? (
       <VizConnector
-        assignRef={ref => (this.domRefs[connection.id] = ref)}
-        className={getConnectorClassName(position)}
+        assignRef={ ref => (this.domRefs[connection.id] = ref) }
+        className={ getConnectorClassName(position) }
       >
         {connection.element}
       </VizConnector>
-    );
+    ) : <VizConnector className="viz-hidden" />;
   }
 
   render() {
-    const { levels, schema } = this.props;
-    // At least 1 level and Schema required
-    return levels.length && schema ? (
+    const { levels, connectors } = this.props;
+    // At least 1 level required
+    return levels.length ? (
       <div className="viz-container">
         <div className="viz-row">
           <div className="viz-column">
@@ -127,16 +109,16 @@ class PRVizSchema extends React.Component {
             {this.renderLevel(LEVELS.THIRD)}
           </div>
         </div>
-        {this.state.refsReady && renderSVGs(this.domRefs, schema)}
+        {this.state.refsReady && renderSVGs(this.domRefs, connectors)}
       </div>
     ) : null;
   }
+
 }
 
 PRVizSchema.defaultProps = {
   levels: [],
-  connectors: [],
-  schema: []
+  connectors: []
 };
 
 PRVizSchema.propTypes = {
@@ -149,52 +131,61 @@ PRVizSchema.propTypes = {
   connectors: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      element: PropTypes.element
-    })
-  ).isRequired,
-  schema: PropTypes.arrayOf(
-    PropTypes.shape({
       fromId: PropTypes.string,
       toId: PropTypes.string,
-      connectionId: PropTypes.string,
       direction: PropTypes.oneOf(Object.values(DIRECTIONS)),
       position: PropTypes.oneOf(Object.values(CONNECTOR_POSITION)),
       disabled: PropTypes.bool,
-      active: PropTypes.bool
+      active: PropTypes.bool,
+      element: PropTypes.element
     })
   ).isRequired
 };
 
 export default PRVizSchema;
 
+/**
+ * Get class name by position
+ * @param {string} position - string value
+ * @returns {string} - class name
+ */
 function getConnectorClassName(position) {
   const baseClass = 'viz-connector';
   switch (position) {
     case CONNECTOR_POSITION.CENTER_TOP:
-      return baseClass + ' center-top';
+      return `${baseClass} center-top`;
     case CONNECTOR_POSITION.CENTER_BOTTOM:
-      return baseClass + ' center-bottom';
+      return `${baseClass} center-bottom`;
     default:
       return baseClass;
   }
 }
 
-function renderSVGs(domRefs, schemas) {
+/**
+ * Render SVGs
+ * @param {Object} domRefs - refs
+ * @param {Array} connectors - schemas
+ * @returns {*} - elements array
+ */
+function renderSVGs(domRefs, connectors) {
+  if (!domRefs || !connectors || !connectors.length) {
+    return null;
+  }
   const elements = [];
-  schemas.forEach(schema => {
+  connectors.forEach(connector => {
     if (
-      schema.direction === DIRECTIONS.LEFT_TO_RIGHT ||
-      schema.direction === DIRECTIONS.TOP_TO_BOTTOM
+      connector.direction === DIRECTIONS.LEFT_TO_RIGHT ||
+      connector.direction === DIRECTIONS.TOP_TO_BOTTOM
     ) {
-      elements.push(renderPath(domRefs, schema));
+      elements.push(renderPath(domRefs, connector));
     }
-    if (schema.direction === DIRECTIONS.LEFT_TOP_TO_RIGHT_DIAG) {
+    if (connector.direction === DIRECTIONS.LEFT_TOP_TO_RIGHT_DIAG) {
       elements.push(
         renderPath(
           domRefs,
           {
-            ...schema,
-            toId: schema.connectionId
+            ...connector,
+            toId: connector.id
           },
           {
             top: TOP_OFFSET,
@@ -206,8 +197,8 @@ function renderSVGs(domRefs, schemas) {
         renderPath(
           domRefs,
           {
-            ...schema,
-            fromId: schema.connectionId
+            ...connector,
+            fromId: connector.id
           },
           {
             top: CONNECTION_TOP_OFFSET,
@@ -217,13 +208,13 @@ function renderSVGs(domRefs, schemas) {
         )
       );
     }
-    if (schema.direction === DIRECTIONS.LEFT_BOTTOM_TO_RIGHT_DIAG) {
+    if (connector.direction === DIRECTIONS.LEFT_BOTTOM_TO_RIGHT_DIAG) {
       elements.push(
         renderPath(
           domRefs,
           {
-            ...schema,
-            toId: schema.connectionId
+            ...connector,
+            toId: connector.id
           },
           {
             top: CONNECTION_TOP_OFFSET,
@@ -236,10 +227,13 @@ function renderSVGs(domRefs, schemas) {
         renderPath(
           domRefs,
           {
-            ...schema,
-            fromId: schema.connectionId
+            ...connector,
+            fromId: connector.id
           },
-          { top: TOP_OFFSET, alternate: CONNECTION_TOP_OFFSET }
+          {
+            top: TOP_OFFSET,
+            alternate: CONNECTION_TOP_OFFSET
+          }
         )
       );
     }
@@ -247,17 +241,24 @@ function renderSVGs(domRefs, schemas) {
   return elements;
 }
 
+/**
+ * Render VizRelationship
+ * @param {Object} domRefs - refs
+ * @param {Object} data - data
+ * @param {Object} offset - offset data
+ * @returns {*} - elements array
+ */
 function renderPath(domRefs, data, offset = defaultOffset) {
-  if (!data) return null;
+  if (!data) { return null; }
   return (
     <VizRelationship
-      key={data.fromId + data.toId}
-      fromRef={domRefs[data.fromId]}
-      toRef={domRefs[data.toId]}
-      direction={data.direction}
-      offset={offset}
-      isDisabled={data.disabled}
-      isActive={data.active}
+      key={ data.fromId + data.toId }
+      fromRef={ domRefs[data.fromId] }
+      toRef={ domRefs[data.toId] }
+      direction={ data.direction }
+      offset={ offset }
+      isDisabled={ data.disabled }
+      isActive={ data.active }
     />
   );
 }

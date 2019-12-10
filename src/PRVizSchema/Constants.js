@@ -36,11 +36,8 @@ export const LEVELS = {
   FOURTH: 3
 };
 
-export const LEVEL_WIDTH = 300;
-export const CONNECTOR_WIDTH = 270;
 export const MIN_LEVEL_HEIGHT = 106;
 export const MIN_CONNECTION_HEIGHT = 40;
-export const MAX_LEVELS = 3;
 export const TOP_OFFSET = 36;
 export const BOTTOM_OFFSET = MIN_LEVEL_HEIGHT - TOP_OFFSET;
 export const CONNECTION_TOP_OFFSET = MIN_CONNECTION_HEIGHT / 2;
