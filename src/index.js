@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import 'prism-reactjs/dist/index.css';
 import Example from './Example';
 import * as serviceWorker from './serviceWorker';

@@ -15,8 +15,19 @@ class PRLocationParent extends React.Component {
       isOpenForEdit: props.isOpenForEdit,
       azName,
       clusterName,
+      clustersList: [],
+      isLoadingClusters: false,
       localSchedule
     };
+    if (azName && props.isEditMode) {
+      this.state.isLoadingClusters = true;
+      const AZ = props.azList.find(l => l.title === azName);
+      props.fetchClustersList(AZ.value,
+        clustersList => this.setState({
+          clustersList,
+          isLoadingClusters: false
+        }));
+    }
   }
 
   renderAddLocalSchedule(onAddLocalSchedule) {
@@ -33,11 +44,62 @@ class PRLocationParent extends React.Component {
     );
   }
 
+  onLocationChange = value => {
+    const { azList, fetchClustersList } = this.props;
+    const AZ = azList.find(l => l.value === value);
+    if (!AZ) {
+      return;
+    }
+    this.setState({
+      azName: AZ.title,
+      clusterName: '',
+      isLoadingClusters: true
+    });
+    fetchClustersList(AZ.value,
+      clustersList => this.setState({
+        clustersList,
+        isLoadingClusters: false
+      }));
+  };
+
+  onClusterChange = value => {
+    const { clustersList } = this.state;
+    const cluster = clustersList.find(l => l.value === value);
+    if (!cluster) {
+      return;
+    }
+    this.setState({
+      clusterName: cluster.title
+    });
+  };
+
+  onCancel = () => {
+    const { data, onDelete } = this.props;
+    const { azName, clusterName } = data || {};
+    if (!azName) {
+      return onDelete(data.id);
+    }
+    this.setState({
+      azName,
+      clusterName,
+      isOpenForEdit: false,
+      clustersList: []
+    });
+  };
+
+  onSave = () => {
+    this.setState({
+      isOpenForEdit: false
+    });
+    if (this.props.onUpdate) {
+      this.props.onUpdate(this.state.azName, this.state.clusterName);
+    }
+  };
+
   render() {
     const {
       isPrimary,
       azList,
-      clustersList,
       onAddLocalSchedule,
       isEditMode
     } = this.props;
@@ -45,19 +107,11 @@ class PRLocationParent extends React.Component {
       azName,
       clusterName,
       localSchedule,
+      clustersList,
       id,
-      isOpenForEdit
+      isOpenForEdit,
+      isLoadingClusters
     } = this.state;
-
-    const onLocationChange = value =>
-      this.setState({
-        azName: azList.find(l => l.value === value).title
-      });
-
-    const onClusterChange = value =>
-      this.setState({
-        clusterName: clustersList.find(l => l.value === value).title
-      });
 
     return (
       <div className="pr-location">
@@ -73,18 +127,11 @@ class PRLocationParent extends React.Component {
             azList={ azList }
             clustersList={ clustersList }
             isPrimary={ isPrimary }
-            onChangeAZ={ onLocationChange }
-            onChangeCluster={ onClusterChange }
-            onCancel={ () =>
-              this.setState({
-                isOpenForEdit: false
-              })
-            }
-            onSave={ () =>
-              this.setState({
-                isOpenForEdit: false
-              })
-            }
+            isLoading={ isLoadingClusters }
+            onChangeAZ={ this.onLocationChange }
+            onChangeCluster={ this.onClusterChange }
+            onCancel={ this.onCancel }
+            onSave={ this.onSave }
           />
         ) : (
           <div
@@ -138,11 +185,12 @@ PRLocationParent.propTypes = {
     })
   }),
   azList: PropTypes.array,
-  clustersList: PropTypes.array,
+  fetchClustersList: PropTypes.func,
   isPrimary: PropTypes.bool,
   isOpenForEdit: PropTypes.bool,
   isEditMode: PropTypes.bool,
   onUpdate: PropTypes.func,
+  onDelete: PropTypes.func,
   onAddLocalSchedule: PropTypes.func
 };
 

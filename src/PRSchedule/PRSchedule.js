@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { TextLabel, FlexLayout } from 'prism-reactjs';
+import { TextLabel, FlexLayout, Button, Link } from 'prism-reactjs';
 import Collapsible from '../Shared/Collapsible';
 
-const PRSchedule = ({ data, onEdit, active, isEditMode }) => {
+const PRSchedule = ({ id, data, onEdit, onDelete, active, isEditMode, onToggle }) => {
   const { frequency = '', rpThreshold = '', type } = data || {};
 
   const Header = (
@@ -16,11 +16,8 @@ const PRSchedule = ({ data, onEdit, active, isEditMode }) => {
   );
 
   return (
-    <div
-      className={ `pr-schedule ${active ? 'active' : ''}` }
-      onClick={ () => isEditMode && onEdit(data) }
-    >
-      <Collapsible header={ Header }>
+    <div className={ `pr-schedule${active ? ' active' : ''}` }>
+      <Collapsible isExpanded={ active } header={ Header } onToggle={ onToggle }>
         <FlexLayout
           alignItems="center"
           justifyContent="space-between"
@@ -35,12 +32,21 @@ const PRSchedule = ({ data, onEdit, active, isEditMode }) => {
           </TextLabel>
         </FlexLayout>
         <TextLabel className="pr-margin-bottom">{type}</TextLabel>
+        {isEditMode && active && (
+          <div className="schedule-actions">
+            <Button type="secondary">
+              <Link type="delete" onClick={ onDelete }>Delete</Link>
+              <Link onClick={ onEdit }>Edit</Link>
+            </Button>
+          </div>
+        )}
       </Collapsible>
     </div>
   );
 };
 
 PRSchedule.propTypes = {
+  id: PropTypes.string,
   data: PropTypes.shape({
     frequency: PropTypes.string,
     rpThreshold: PropTypes.number,
@@ -48,7 +54,9 @@ PRSchedule.propTypes = {
   }),
   active: PropTypes.bool,
   isEditMode: PropTypes.bool,
-  onEdit: PropTypes.func
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
+  onToggle: PropTypes.func
 };
 
 export default PRSchedule;

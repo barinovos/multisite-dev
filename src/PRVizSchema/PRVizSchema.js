@@ -15,7 +15,7 @@ import {
   CONNECTION_TOP_OFFSET
 } from './Constants';
 // eslint-disable-next-line import/no-unassigned-import
-import './styles.css';
+import './styles.scss';
 
 const defaultOffset = { top: TOP_OFFSET };
 
@@ -83,7 +83,7 @@ class PRVizSchema extends React.Component {
       >
         {connection.element}
       </VizConnector>
-    ) : <VizConnector className="viz-hidden" />;
+    ) : <VizConnector className="viz-connector viz-hidden" />;
   }
 
   render() {
@@ -173,12 +173,16 @@ function renderSVGs(domRefs, connectors) {
   }
   const elements = [];
   connectors.forEach(connector => {
+    // For straight direction we ignore connector
+    // and connect only Levels Refs
     if (
       connector.direction === DIRECTIONS.LEFT_TO_RIGHT ||
       connector.direction === DIRECTIONS.TOP_TO_BOTTOM
     ) {
       elements.push(renderPath(domRefs, connector));
     }
+    // For diagonal connections we render 2 SVGs
+    // the connect both Levels with Connector using connector as Ref also
     if (connector.direction === DIRECTIONS.LEFT_TOP_TO_RIGHT_DIAG) {
       elements.push(
         renderPath(

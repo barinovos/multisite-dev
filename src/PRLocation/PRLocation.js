@@ -14,6 +14,7 @@ const PRLocation = ({
   azName,
   clusterName,
   isPrimary,
+  isLoading,
   onChangeAZ,
   onChangeCluster,
   onSave,
@@ -42,8 +43,9 @@ const PRLocation = ({
           className="pr-margin-bottom"
           element={
             <Select
+              disabled={ isLoading }
               selectOptions={ clustersList }
-              value={ clusterName }
+              value={ isLoading ? 'Loading...' : clusterName }
               onChange={ onChangeCluster }
             />
           }

@@ -1,3 +1,4 @@
-import PRVizContainer from './PRVizContainer';
+import * as Exports from './PRVizContainer';
 
-export default PRVizContainer;
+export const MODES = Exports.MODES;
+export default Exports.default;

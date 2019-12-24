@@ -6,11 +6,23 @@ export default class Collapsible extends React.Component {
 
   static propTypes = {
     header: PropTypes.element,
-    disabled: PropTypes.bool
+    isExpanded: PropTypes.bool,
+    disabled: PropTypes.bool,
+    onToggle: PropTypes.func
   };
 
-  state = {
-    expanded: false
+  constructor(props) {
+    super(props);
+    this.state = {
+      expanded: !!props.isExpanded
+    };
+  }
+
+  onToggle = () => {
+    this.setState({ expanded: !this.state.expanded });
+    if (this.props.onToggle) {
+      this.props.onToggle(!this.state.expanded);
+    }
   };
 
   render() {
@@ -20,7 +32,8 @@ export default class Collapsible extends React.Component {
       <div>
         <FlexLayout
           data-testid="pr-collapsible"
-          onClick={ () => this.setState({ expanded: !expanded }) }
+          className="pr-collapsible"
+          onClick={ this.onToggle }
         >
           <Link type="expandable" expanded={ expanded } disabled={ disabled } />
           {header}

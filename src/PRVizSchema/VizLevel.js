@@ -8,7 +8,7 @@ const testId = 'viz-level';
 
 const VizLevel = ({ children, className, assignRef }) => (
   <div
-    className={ `viz-level ${className}` }
+    className={ `viz-level ${className || ''}` }
     ref={ assignRef }
     data-testid={ testId }
   >
